@@ -1,8 +1,11 @@
 import sys
 import json
-from PySide6.QtWidgets import QApplication, QMessageBox
-from PySide6.QtCore import QTimer, QDateTime
+
+from PySide6.QtGui import QIcon
+from PySide6.QtCore import Qt, QTimer, QDateTime
+from PySide6.QtWidgets import QApplication, QMessageBox, QTableWidgetItem  # Add QTableWidgetItem
 from form import UI_Form
+
 
 class MemoryApp(UI_Form):
     def __init__(self):
@@ -16,6 +19,7 @@ class MemoryApp(UI_Form):
         self.menu_button.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(0))
         self.words_button.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(1))
         self.test_button.clicked.connect(self.switch_to_test)
+        self.telegram_button.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(3))
 
         # Connect words buttons
         self.add_button.clicked.connect(self.add_word)
@@ -25,6 +29,9 @@ class MemoryApp(UI_Form):
         self.submit_button.clicked.connect(self.process_answer)
         self.retry_button.clicked.connect(self.retry_later)
         self.refresh_button.clicked.connect(self.check_due_tests)
+
+        # Connect telegram button
+        self.save_user_id_button.clicked.connect(self.save_telegram_user_id)
 
         # Setup timer
         self.timer = QTimer()
@@ -54,7 +61,7 @@ class MemoryApp(UI_Form):
     def save_data(self):
         data_to_save = []
         for word, info in self.data.items():
-            pending_tests = [t.toString(Qt.ISODate) for t in info["pending_tests"]]
+            pending_tests = [t.toString(Qt.ISODate) for t in info["pending_tests"]]  # Fix here
             data_to_save.append({
                 "word": word,
                 "meaning": info["meaning"],
@@ -182,9 +189,19 @@ class MemoryApp(UI_Form):
             self.words_table.setItem(row, 2, QTableWidgetItem(info["category"]))
         self.words_table.resizeColumnsToContents()
 
+    def save_telegram_user_id(self):
+        user_id = self.user_id_edit.text().strip()
+        if user_id:
+            self.telegram_user_id = user_id
+            self.save_data()
+            print(f"Сохранён Telegram User ID: {user_id}")
+            QMessageBox.information(self, "Успех", "Telegram User ID сохранён!")
+        else:
+            QMessageBox.warning(self, "Ошибка", "Пожалуйста, введите Telegram User ID.")
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MemoryApp()
     window.show()
     sys.exit(app.exec())
-    print(1111)

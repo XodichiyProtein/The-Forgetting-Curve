@@ -25,9 +25,11 @@ class UI_Form(QMainWindow):
         self.menu_button = QPushButton("Меню")
         self.words_button = QPushButton("Слова")
         self.test_button = QPushButton("Проверка")
+        self.telegram_button = QPushButton("Уведомление в тг")  # New button
         nav_layout.addWidget(self.menu_button)
         nav_layout.addWidget(self.words_button)
         nav_layout.addWidget(self.test_button)
+        nav_layout.addWidget(self.telegram_button)  # Add to layout
         nav_widget.setLayout(nav_layout)
         main_layout.addWidget(nav_widget)
 
@@ -189,7 +191,48 @@ class UI_Form(QMainWindow):
             }
         """)
 
+        # Telegram notification widget
+        self.telegram_widget = QWidget()
+        telegram_layout = QVBoxLayout()
+        telegram_form = QFormLayout()
+        self.user_id_edit = QLineEdit()
+        self.user_id_edit.setPlaceholderText("Введите Telegram User ID")
+        telegram_form.addRow("ID пользователя:", self.user_id_edit)
+        self.save_user_id_button = QPushButton("Сохранить ID")
+        telegram_form.addWidget(self.save_user_id_button)
+        telegram_layout.addLayout(telegram_form)
+        telegram_layout.addStretch()
+        self.telegram_widget.setLayout(telegram_layout)
+
+        # Telegram widget styling
+        self.telegram_widget.setStyleSheet("""
+            QPushButton {
+                font-size: 14px;
+                padding: 8px 16px;
+                background-color: #4CAF50;
+                color: white;
+                border: 1px solid #388E3C;
+                border-radius: 5px;
+                margin: 5px;
+            }
+            QPushButton:hover {
+                background-color: #45a049;
+            }
+            QPushButton:disabled {
+                background-color: #cccccc;
+                color: #666666;
+            }
+            QLineEdit {
+                font-size: 14px;
+                padding: 5px;
+                border: 1px solid #cccccc;
+                border-radius: 5px;
+                margin: 5px;
+            }
+        """)
+
         # Add widgets to stacked widget
         self.stacked_widget.addWidget(self.menu_widget)
         self.stacked_widget.addWidget(self.words_widget)
         self.stacked_widget.addWidget(self.testing_widget)
+        self.stacked_widget.addWidget(self.telegram_widget)  # Add new widget
